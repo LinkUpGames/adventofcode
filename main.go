@@ -75,32 +75,6 @@ func nextWord(crossword [][]byte, coords []int, index int) int {
 	i := coords[0]
 	j := coords[1]
 
-	// Boundary check
-	if i < 0 || i >= len(crossword) || j < 0 || j >= len(crossword[0]) {
-		return 0
-	}
-
-	// Character comparison and bounds check
-	if index >= len(word) {
-		return 1 // Word found
-	}
-	if crossword[i][j] != word[index] {
-		return 0 // Character mismatch
-	}
-
-	// Explore all eight directions and accumulate counts
-	directions := [][]int{{-1, 0}, {1, 0}, {0, 1}, {0, -1}, {-1, 1}, {1, 1}, {-1, -1}, {1, -1}}
-	count := 0
-	for _, dir := range directions {
-		count += nextWord(crossword, []int{i + dir[0], j + dir[1]}, index+1)
-	}
-	return count
-}
-
-func _nextWord(crossword [][]byte, coords []int, index int) int {
-	i := coords[0]
-	j := coords[1]
-
 	// Correct boundary check
 	if i < 0 || i >= len(crossword) || j < 0 || j >= len(crossword[0]) {
 		return 0
