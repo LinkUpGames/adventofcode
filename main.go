@@ -63,7 +63,7 @@ func checkCrossword(crossword [][]byte) int {
 				total += nextWord(crossword, pos, 1)
 				// Right
 				pos = []int{i, j - 1}
-				total += nextWord(crossword, pos, 1)
+				total += nextWord(crossword, pos, 1) // continue here
 			}
 		}
 	}
