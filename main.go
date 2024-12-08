@@ -9,7 +9,7 @@ import (
 var word string = "XMAS"
 
 func main() {
-	matrix := getMatrix("input.txt")
+	matrix := getMatrix("default.txt")
 
 	printCrossword(matrix)
 	total := checkCrossword(matrix)
@@ -41,41 +41,22 @@ func getMatrix(input string) [][]byte {
 
 func checkCrossword(crossword [][]byte) int {
 	total := 0
-
 	rows := len(crossword)
 	columns := len(crossword[0])
 
+	directions := [][2]int{
+		{-1, 0}, {1, 0}, {0, -1}, {0, 1}, // Up, Down, Left, Right
+		{-1, -1}, {-1, 1}, {1, -1}, {1, 1}, // Diagonals
+	}
+
 	for i := 0; i < rows; i++ {
 		for j := 0; j < columns; j++ {
-			var pos []int
-			character := crossword[i][j]
-
-			// We found a character
-			if character == word[0] {
-				// Up
-				pos = []int{i - 1, j}
-				total += nextWord(crossword, pos, []int{-1, 0}, 1)
-				// Down
-				pos = []int{i + 1, j}
-				total += nextWord(crossword, pos, []int{1, 0}, 1)
-				// Left
-				pos = []int{i, j + 1}
-				total += nextWord(crossword, pos, []int{0, 1}, 1)
-				// Right
-				pos = []int{i, j - 1}
-				total += nextWord(crossword, pos, []int{-1, -1}, 1)
-				// Diagonal Left Up
-				pos = []int{i - 1, j + 1}
-				total += nextWord(crossword, pos, []int{-1, 1}, 1)
-				// Diagonal Left Down
-				pos = []int{i + 1, j + 1}
-				total += nextWord(crossword, pos, []int{1, 1}, 1)
-				// Diagonal Right Up
-				pos = []int{i - 1, j - 1}
-				total += nextWord(crossword, pos, []int{-1, -1}, 1)
-				// Diagonal Right Down
-				pos = []int{i + 1, j - 1}
-				total += nextWord(crossword, pos, []int{1, -1}, 1)
+			if crossword[i][j] == word[0] { // Only start search if the first letter matches
+				for _, dir := range directions {
+					if nextWord(crossword, i, j, dir[0], dir[1], 1) {
+						total++
+					}
+				}
 			}
 		}
 	}
@@ -84,28 +65,21 @@ func checkCrossword(crossword [][]byte) int {
 }
 
 // check the next word in the sequence
-func nextWord(crossword [][]byte, pos []int, amount []int, index int) int {
-	i := pos[0]
-	j := pos[1]
-
-	// out of bounds
-	if i < 0 || j < 0 || i >= len(crossword) || j >= len(crossword[0]) {
-		return 0
-	}
-
-	// Bingo
+func nextWord(crossword [][]byte, x, y, dx, dy, index int) bool {
 	if index >= len(word) {
-		return 1
+		return true // Found the word
 	}
 
-	character := crossword[i][j]
-
-	// Check if the character differs at the position
-	if character != word[index] {
-		return 0
+	nx, ny := x+dx, y+dy // Calculate next position
+	if nx < 0 || nx >= len(crossword) || ny < 0 || ny >= len(crossword[0]) {
+		return false // Out of bounds
 	}
 
-	return nextWord(crossword, []int{i + amount[0], j + amount[1]}, amount, index+1)
+	if crossword[nx][ny] != word[index] {
+		return false // Character doesn't match
+	}
+
+	return nextWord(crossword, nx, ny, dx, dy, index+1)
 }
 
 func printCrossword(crossword [][]byte) {
