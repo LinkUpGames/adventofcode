@@ -9,7 +9,7 @@ import (
 var word string = "XMAS"
 
 func main() {
-	matrix := getMatrix("default.txt")
+	matrix := getMatrix("input.txt")
 
 	printCrossword(matrix)
 	total := checkCrossword(matrix)
