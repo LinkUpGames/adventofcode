@@ -8,9 +8,12 @@ import (
 )
 
 func main() {
-	rules, _ := parseFile("default.txt")
+	rules, sequences := parseFile("default.txt")
 
 	printRules(rules)
+	for _, sequence := range sequences {
+		checkSequence(sequence, rules)
+	}
 }
 
 func parseFile(input string) (map[int][]int, []string) {
@@ -51,6 +54,63 @@ func printRules(rules map[int][]int) {
 	}
 }
 
-func checkSequence(sequence string) int {
+func checkSequence(sequence string, rules map[int][]int) int {
+	seen := make(map[int]bool)
+	nums := strings.Split(sequence, ",")
+
+	for _, strnum := range nums {
+		num, _ := strconv.Atoi(strnum)
+
+		// Seen this one
+		seen[num] = true
+
+		beforenums, _ := rules[num]
+
+		for _, num := range beforenums {
+			_, exists := seen[num]
+			if exists {
+				fmt.Printf("Hello: %d\n", exists)
+			}
+		}
+	}
+
 	return 0
+}
+
+func rulesForSequence(sequence string, rules map[int][]int) map[int][]int {
+	seen := make(map[int]bool)
+
+	nums := strings.Split(sequence, ",")
+
+	// Copy
+	for _, strnum := range nums {
+		num, _ := strconv.Atoi(strnum)
+		seen[num] = true
+	}
+
+	for key, values := range rules {
+		for _, num := range values {
+			_, exists := seen[num]
+
+			if !exists {
+				rules[key] = removeFromArray(num, rules[key])
+			}
+		}
+	}
+
+	return rules
+}
+
+func removeFromArray[T comparable](element any, array []T) []T {
+	index := 0
+	for i, value := range array {
+		if value == element {
+			index = i
+			break
+		}
+	}
+
+	array[index] = array[len(array)-1]
+
+	return array[:len(array)-1]
 }
