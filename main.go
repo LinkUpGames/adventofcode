@@ -82,20 +82,10 @@ func rulesForSequence(sequence string, rules map[int][]int) map[int][]int {
 
 	nums := strings.Split(sequence, ",")
 
-	// Copy
+	// Go through the sequence and get the numbers that actually apply
 	for _, strnum := range nums {
 		num, _ := strconv.Atoi(strnum)
 		seen[num] = true
-	}
-
-	for key, values := range rules {
-		for _, num := range values {
-			_, exists := seen[num]
-
-			if !exists {
-				rules[key] = removeFromArray(num, rules[key])
-			}
-		}
 	}
 
 	return rules
